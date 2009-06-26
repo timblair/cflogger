@@ -112,27 +112,27 @@
 	<!--- the various interface methods for different logging levels --->
 	<cffunction name="debug" access="public" returntype="void" output="no" hint="Logs a DEBUG message">
 		<cfargument name="message" type="any" required="yes" hint="The message to log">
-		<cfset write(this.levels.DEBUG, arguments.message)>		
+		<cfset write(this.levels.DEBUG, arguments.message)>
 	</cffunction>
-	
+
 	<cffunction name="info" access="public" returntype="void" output="no" hint="Logs a INFO message">
 		<cfargument name="message" type="any" required="yes" hint="The message to log">
-		<cfset write(this.levels.INFO, arguments.message)>		
+		<cfset write(this.levels.INFO, arguments.message)>
 	</cffunction>
-	
+
 	<cffunction name="warn" access="public" returntype="void" output="no" hint="Logs a WARN message">
 		<cfargument name="message" type="any" required="yes" hint="The message to log">
-		<cfset write(this.levels.WARN, arguments.message)>		
+		<cfset write(this.levels.WARN, arguments.message)>
 	</cffunction>
-	
+
 	<cffunction name="error" access="public" returntype="void" output="no" hint="Logs a ERROR message">
 		<cfargument name="message" type="any" required="yes" hint="The message to log">
-		<cfset write(this.levels.ERROR, arguments.message)>		
+		<cfset write(this.levels.ERROR, arguments.message)>
 	</cffunction>
-	
+
 	<cffunction name="fatal" access="public" returntype="void" output="no" hint="Logs a FATAL message">
 		<cfargument name="message" type="any" required="yes" hint="The message to log">
-		<cfset write(this.levels.FATAL, arguments.message)>		
+		<cfset write(this.levels.FATAL, arguments.message)>
 	</cffunction>
 
 	<!--- function for logging an actual message --->
