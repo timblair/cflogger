@@ -44,7 +44,7 @@
 		<cfargument name="level" type="numeric" required="yes" hint="The log level of this message">
 		<cfargument name="message" type="string" required="yes" hint="The message to log">
 		<cftry>
-			<cfhttp url="http://twitter.com/statuses/update.xml" method="POST" throwonerror="yes" username="#variables.user#" password="#variables.pass#" result="call">
+			<cfhttp url="http://twitter.com/statuses/update.xml" method="POST" throwonerror="yes" username="#variables.user#" password="#variables.pass#">
 				<cfhttpparam type="formfield" name="status" value="#arguments.message#">
 			</cfhttp>
 			<cfcatch type="any">

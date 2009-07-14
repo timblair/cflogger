@@ -138,6 +138,13 @@ Sends each message to a waiting socket on a remote machine.  Initialisation argu
 * `persistent` -- a `boolean` as to whether we should use a persistent socket connection or reconnect for every messages
 * `terminator` -- a `string` line terminator (defaults to `\n`)
 
+### `TwitterListener`
+
+Sends each message as a status update to a [Twitter](http://twitter.com/) account.  Initialisation arguments are:
+
+* `user` -- the Twitter username to post as
+* `pass` -- the password of the Twitter user to post as
+
 ## Writing Your Own Listener
 
 None of the loggers provide exactly what you're after?  You can easily write your own to fit the job perfectly.  Maybe you'd like those important messages sent to you via email or SMS?  What about logging to IRC, or even Jabber?
