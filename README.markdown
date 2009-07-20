@@ -46,6 +46,16 @@ In increasing severity the defined levels are:
 
 Each listener registered with the logger can be configured with a different log level; this will be the minimum level a message needs to be to be logged (so a listener configured at the WARN level will also receive ERROR and FATAL messages).  Setting the log level on the listener, rather than the logger itself, allows the flexibility to do something like log at the WARN level to database, but then have FATAL messages emailed or sent by SMS.
 
+## Data Serialisation
+
+You can log any type of data: it doesn't just have to be a string.  If you pass a non-simple value to one of the logging functions (`debug`, `info` etc), it will be serialised into a string before being passed to the registered listeners.  The default serialisation type is JSON, but you can use YAML instead by instantiating the `Logger` as follows:
+
+    <cfset variables.logger = createobject("component", "cflogger.core.Logger").init(
+        serialiser = createobject("component", "cflogger.serialisers.YAML")
+    )>
+
+You can implement your own serialiser by creating a component that extends `cflogger.serialisers.Base` and implements the `serialise` function.
+
 ## Available Listeners
 
 There are four default log listeners which can be registered with a logger in any combination, at different log levels should it be required.

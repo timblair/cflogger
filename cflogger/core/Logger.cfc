@@ -10,14 +10,16 @@
 
 	<!--- instance variables --->
 	<cfscript>
-		this.levels         = createobject("component", "cflogger.core.LogLevels");
-		variables.name      = "default-" & FormatBaseN(CreateObject('java','java.lang.System').identityHashCode(this), 16);
-		variables.listeners = arraynew(1);
+		this.levels          = createobject("component", "cflogger.core.LogLevels");
+		variables.name       = "default-" & FormatBaseN(CreateObject('java','java.lang.System').identityHashCode(this), 16);
+		variables.listeners  = arraynew(1);
+		variables.serialiser = createobject("component", "cflogger.serialisers.JSON");
 	</cfscript>
 
 	<!--- function for initing --->
 	<cffunction name="init" access="public" returntype="cflogger.core.Logger" output="no" hint="Initialises this logger">
 		<cfargument name="name" type="string" required="no" default="" hint="The name for this logger instance.  Defaults to <code>application.applicationname</code>, lowercased and stripped to alnum chars, if not provided; if no application name then uses a random generated string.">
+		<cfargument name="serialiser" type="cflogger.serialisers.Base" required="no" hint="An optional serialiser for non-simple value logging (default is JSON)">
 		<cfif NOT len(arguments.name) AND isdefined("application.applicationname")>
 			<cfset arguments.name = application.applicationname>
 		</cfif>
@@ -26,6 +28,8 @@
 		</cfif>
 		<!--- strip out any unwanted chars --->
 		<cfset variables.name = rereplacenocase(variables.name, "[^0-9a-z]", "", "ALL")>
+		<!--- if a different serialiser type has been passed, use that instead --->
+		<cfif structkeyexists(arguments, "serialiser")><cfset variables.serialiser = arguments.serialiser></cfif>
 		<!--- return the lovely object --->
 		<cfreturn this>
 	</cffunction>
@@ -142,7 +146,7 @@
 		<!--- localise vars --->
 		<cfset var i = 0>
 		<!--- if the message is not a simple value, JSON encode it --->
-		<cfif NOT isSimpleValue(arguments.message)><cfset arguments.message = serializejson(arguments.message)></cfif>
+		<cfif NOT isSimpleValue(arguments.message)><cfset arguments.message = variables.serialiser.serialise(arguments.message)></cfif>
 		<!--- don't do anything if there's nothing to write --->
 		<cfif NOT len(trim(arguments.message))><cfreturn></cfif>
 		<!--- send the message to each listener --->
