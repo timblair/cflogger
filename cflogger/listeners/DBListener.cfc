@@ -17,6 +17,8 @@
 		// initialisation variables
 		variables.initchecks = FALSE;   // should we run init checks like "does the DSN exist"
 		variables.autocreate = FALSE;   // if the log table doesn't exist, should we try and create it?'
+		variables.username   = "";      // if we're performing init checks, and we're using CF > 9.0.0,
+		variables.password   = "";      // we need to go through the official admin API
 	</cfscript>
 
 	<!--- function for setting up the listener --->
@@ -28,6 +30,8 @@
 		<cfargument name="leveltype" type="string" required="no" default="string" hint="Should we store the level as a string or a numeric value?  Default is 'string'.  For numeric values this should be 'numeric'">
 		<cfargument name="initchecks" type="boolean" required="no" default="FALSE" hint="Should initialisation checks be run?  Does clever things like checking the DSN exists and can be written to etc...">
 		<cfargument name="autocreate" type="boolean" required="no" default="FALSE" hint="Should we try and automatically create the appropriate table if it doesn't already exist?  Also requires <em>initchecks</em> to be true">
+		<cfargument name="username" type="string" required="no" hint="CF admin username for registration checks on CF > 9.0.0 if initchecks is specified.">
+		<cfargument name="password" type="string" required="no" hint="CF admin password for registration checks on CF > 9.0.0 if initchecks is specified.">
 
 		<!--- do the parent class stuff --->
 		<cfset super.init(arguments.level)>
@@ -40,6 +44,9 @@
 		<!--- checks and creation flags --->
 		<cfset variables.initchecks = arguments.initchecks>
 		<cfset variables.autocreate = arguments.autocreate>
+		<!--- admin api access details for registration checks --->
+		<cfif structkeyexists(arguments, "username")><cfset variables.username = arguments.username></cfif>
+		<cfif structkeyexists(arguments, "password")><cfset variables.password = arguments.password></cfif>
 
 		<!--- return our lovely horse, er, object --->
 		<cfreturn this>
@@ -48,12 +55,20 @@
 	<!--- function to be run as a callback when a listener has been registered with a logged --->
 	<cffunction name="on_register" access="public" returntype="void" output="yes" hint="Run when a listener is registered with a logger">
 		<!--- localise vars --->
-		<cfset var datasources = CreateObject("java", "coldfusion.server.ServiceFactory").datasourceservice.getDatasources()>
+		<cfset var datasources = "">
 		<cfset var q = "">
 		<cfset var ds = "">
 
 		<!--- don't do anything if we're not worried about the checks --->
 		<cfif NOT variables.initchecks><cfreturn></cfif>
+
+		<!--- for anything over 9.0.0, use the admin API --->
+		<cfif listlast(server.coldfusion.productversion) GT 251028>
+			<cfset createobject("component", "cfide.adminapi.administrator").login(variables.password, variables.username)>
+			<cfset datasources = createobject("component", "cfide.adminapi.datasource").getDatasources()>
+		<cfelse>
+			<cfset datasources = createobject("java", "coldfusion.server.ServiceFactory").datasourceservice.getDatasources()>
+		</cfif>
 
 		<!--- check if the datasource exists --->
 		<cfif NOT structkeyexists(datasources, variables.dsn)>

@@ -76,7 +76,9 @@ If the log file cannot be written to during the `on_register` phase, the logger 
 
 ### `DBListener`
 
-Logs messages to a database table.  Currently MySQL only if the `initchecks` argument is specfied.  Initialisation arguments are:
+> Note: due to [changes introduced in CF 9.0.1](http://forums.adobe.com/thread/699890), if you're using this version or above and are using the `initchecks` feature, you'll also need to provide a valid CF Admin username and password, because accessing the datasources service can now only be performed via the authenticated Admin API.
+
+Logs messages to a database table.  Currently MySQL-only if the `initchecks` argument is specfied.  Initialisation arguments are:
 
 * `level` -- the `numeric` log level
 * `dsn` -- the `string` datasource name to write to
@@ -85,6 +87,8 @@ Logs messages to a database table.  Currently MySQL only if the `initchecks` arg
 * `leveltype` -- should we store the level as a string or a numeric value? (default is `string`)
 * `initchecks` -- a `boolean` specifying if initialisation checks be run, such as checking the DSN exists and can be written to (default is `FALSE`)
 * `autocreate` -- a `boolean` specifying if we should try and automatically create the appropriate table if it doesn't already exist?  Also requires `initchecks` to be true (default is `FALSE`)
+* `username` -- a `string` giving a CF Admin username which has access to the datasources Admin API (only required if `initchecks` is `TRUE` and CF server version is >= 9.0.1)
+* `password` -- the `string` password for the above Admin API username
 
 If `initchecks` is specified, the following checks are performed (and the listener unregistered if any fail):
 
